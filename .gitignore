@@ -1,4 +1,8 @@
 .idea/
 target/
-postgres/data/
 logs/
+
+# Volumes Docker
+postgres/data/
+grafana/
+prometheus/prometheus_data/
