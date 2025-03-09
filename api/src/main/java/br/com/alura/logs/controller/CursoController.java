@@ -95,24 +95,40 @@ public class CursoController {
 	
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteCursos(@PathVariable(value = "id") UUID id){
+        logger.info("Chamando cursoService para deletar um registro por UUID");
+
         Optional<CursoModel> cursoModelOptional = cursoService.findById(id);
+        logger.info("Validando por cursoService se o UUID existe");
+
         if (!cursoModelOptional.isPresent()) {
+            logger.warn("Tentativa de exclusão abortada, UUID informado não existe!");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Curso não encontrado!");
         }
+        logger.info("Validações de cursoService sobre cursoDto executadas com sucesso!");
         cursoService.delete(cursoModelOptional.get());
+
+        logger.info("O registro procurado pelo cliente foi encontrado e deletado por cursoService no database");
         return ResponseEntity.status(HttpStatus.OK).body("Curso excluído com sucesso!");
     }
     
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateCursos(@PathVariable(value = "id") UUID id, @RequestBody @Valid CursoDto cursoDto) {
+        logger.info("Chamando cursoService para atualizar um registro por UUID");
         Optional<CursoModel> cursoModelOptional = cursoService.findById(id);
+
+        logger.info("Validando por cursoService se o UUID existe");
         if (!cursoModelOptional.isPresent()) {
+            logger.warn("Validação em cursoService não encontrou o registro procurado!");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Curso não encontrado!");
         }
+
+        logger.info("Validação de cursoService sobre cursoDto executada com sucesso!");
         var cursoModel = new CursoModel();
         BeanUtils.copyProperties(cursoDto, cursoModel);
         cursoModel.setId(cursoModelOptional.get().getId());
         cursoModel.setDataInscricao(cursoModelOptional.get().getDataInscricao());
+        
+        logger.info("O registro foi atualizado por cursoService no database com sucesso!");
         return ResponseEntity.status(HttpStatus.OK).body(cursoService.save(cursoModel));
     }
 
